@@ -1,0 +1,4 @@
+repo: https://charts.crossplane.io/stable
+name: crossplane
+version: 2.0.*
+namespace: crossplane-system

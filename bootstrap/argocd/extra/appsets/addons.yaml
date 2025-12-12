@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: addons
+  namespace: argocd
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+    - git:
+        repoURL: git@github.com:jjsiv/autopay-exercise.git
+        revision: HEAD
+        files:
+          - path: bootstrap/addons/*/config.yaml
+  template:
+    metadata:
+      name: "{{ .path.basename }}"
+      labels:
+        addon: "{{ .path.basename }}"
+    spec:
+      project: infrastructure
+      destination:
+        name: "in-cluster"
+        namespace: "{{ .namespace }}"
+      sources:
+        - repoURL: "{{ .repo }}"
+          chart: "{{ .name }}"
+          targetRevision: "{{ .version }}"
+          helm:
+            ignoreMissingValueFiles: true
+            releaseName: "{{ default .path.basename .releaseName }}"
+            valueFiles:
+              - $values/{{ .path.path }}/values.yaml
+        - repoURL: git@github.com:jjsiv/autopay-exercise.git
+          targetRevision: main
+          ref: values
+        - repoURL: git@github.com:jjsiv/autopay-exercise.git
+          targetRevision: main
+          path: "{{ .path.path }}/extra"
+          directory:
+            recurse: true
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - ServerSideApply=true
+          - CreateNamespace=true
