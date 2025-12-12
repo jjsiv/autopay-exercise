@@ -6,7 +6,7 @@ metadata:
 spec:
   project: infrastructure
   destination:
-    name: rpi
+    name: in-cluster
     namespace: argocd
   sources:
     - repoURL: https://argoproj.github.io/argo-helm
@@ -16,13 +16,13 @@ spec:
         ignoreMissingValueFiles: true
         releaseName: argocd
         valueFiles:
-          - $values/bootstrap/management/argocd/values.yaml
-    - repoURL: git@github.com:jjsiv-homelab/infra.git
+          - $values/bootstrap/argocd/values.yaml
+    - repoURL: git@github.com:jjsiv/autopay-exercise.git
       targetRevision: main
       ref: values
-    - repoURL: git@github.com:jjsiv-homelab/infra.git
+    - repoURL: git@github.com:jjsiv/autopay-exercise.git
       targetRevision: main
-      path: bootstrap/management/argocd/extra
+      path: bootstrap/argocd/extra
       directory:
         recurse: true
   syncPolicy:
