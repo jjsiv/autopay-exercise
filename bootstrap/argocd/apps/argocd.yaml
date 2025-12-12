@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: infrastructure
+  destination:
+    name: rpi
+    namespace: argocd
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: 9.1.*
+      helm:
+        ignoreMissingValueFiles: true
+        releaseName: argocd
+        valueFiles:
+          - $values/bootstrap/management/argocd/values.yaml
+    - repoURL: git@github.com:jjsiv-homelab/infra.git
+      targetRevision: main
+      ref: values
+    - repoURL: git@github.com:jjsiv-homelab/infra.git
+      targetRevision: main
+      path: bootstrap/management/argocd/extra
+      directory:
+        recurse: true
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

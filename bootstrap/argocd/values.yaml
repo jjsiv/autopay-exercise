@@ -1,0 +1,12 @@
+configs:
+  cm:
+    accounts.crossplane: apiKey
+    accounts.crossplane.enabled: "true"
+    kustomize.buildOptions: "--enable-helm"
+
+  params:
+    server.insecure: true
+
+  rbac:
+    policy.csv: |
+      g, crossplane, role:admin
