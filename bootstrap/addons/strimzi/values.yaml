@@ -1,1 +1,2 @@
 watchAnyNamespace: true
+createAggregateRoles: false
