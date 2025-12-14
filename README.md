@@ -74,3 +74,5 @@ Addon deployments are divided by deployment types: **kustomize** and **helm**. I
 For PoC purposes, just two ApplicationSets are used to deploy these addons:
 [helm-addons](./bootstrap/argocd/extra/appsets/helm-addons.yaml) and [kustomize-addons](./bootstrap/argocd/extra/appsets/kustomize-addons.yaml).
 They both run a single [Git generator](https://argo-cd.readthedocs.io/en/latest/operator-manual/applicationset/Generators-Git/) which generates and templates addon Applications per file or directory found.
+
+# Solution documentation
