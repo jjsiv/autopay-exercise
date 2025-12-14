@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kafka-topics
+  namespace: argocd
+spec:
+  description: This project is used for managing Kafka topics.
+  destinations:
+    - namespace: kafka-topics
+      name: in-cluster
+  sourceRepos:
+    - "https://github.com/jjsiv/autopay-exercise.git"
+    - "git@github.com:jjsiv/autopay-exercise.git"
+  namespaceResourceWhitelist:
+    - group: "poc.io"
+      kind: "KafkaTopicClaim"
+  sourceNamespaces:
+    - argocd
