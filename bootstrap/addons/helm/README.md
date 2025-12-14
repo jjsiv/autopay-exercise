@@ -3,7 +3,9 @@
 This directory contains cluter addons deployed from Helm charts.
 The ArgoCD `helm-addons` ApplicationSet will generate an Application for each directory contained here with name equal to the directory name.
 
-Each directory must contain a `config.yaml` file with the following keys:
+Each directory must contain a `config.yaml` and optionally a single `values.yaml` files for customizing the release.
+
+The structure for the `config.yaml` file is as follows:
 
 ```yaml
 repo: https://strimzi.io/charts
