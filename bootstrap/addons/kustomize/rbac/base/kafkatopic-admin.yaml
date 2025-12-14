@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.crossplane.io/aggregate-to-crossplane: "true"
+  name: kafkatopic-admin
+rules:
+  - apiGroups:
+      - kafka.strimzi.io
+    resources:
+      - kafkatopics
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+      - update
