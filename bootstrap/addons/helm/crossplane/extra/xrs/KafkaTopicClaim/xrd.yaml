@@ -1,0 +1,44 @@
+apiVersion: apiextensions.crossplane.io/v2
+kind: CompositeResourceDefinition
+metadata:
+  name: kafkatopicclaims.poc.io
+spec:
+  scope: Namespaced
+  group: poc.io
+  names:
+    kind: KafkaTopicClaim
+    plural: kafkatopicclaims
+    shortNames:
+      - ktc
+      - ktcs
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                topicName:
+                  description: Name of the Kafka topic to create.
+                  type: string
+                partitions:
+                  type: integer
+                  minimum: 1
+                  description: The number of partitions for this topic. Cannot be less than 1.
+                replicas:
+                  type: integer
+                  minimum: 1
+                  maximum: 32767
+                  description:
+                    The number of replicas the topic should have. When absent
+                    this will default to the broker configuration for `default.replication.factor`.
+                retention:
+                  type: integer
+                  description: Retention time in miliseconds.
+                    Cannot be less than 1 hour (3600000) and higher than 7 days (604800000).
+              required:
+                - topicName
