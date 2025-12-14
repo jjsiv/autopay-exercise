@@ -21,15 +21,19 @@ spec:
               kind: KafkaTopic
               metadata:
                 namespace: kafka-topics
-              spec:
-                topicName: ""
-                partitions: 1
-                replicas: 1
-                retention: 3600000
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.topicName
                 toFieldPath: spec.topicName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.partitions
+                toFieldPath: spec.partitions
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.replicas
+                toFieldPath: spec.replicas
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.retention
+                toFieldPath: spec.config[retention.ms]
             readinessChecks:
               - type: MatchCondition
                 matchCondition:
