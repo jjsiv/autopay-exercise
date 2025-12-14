@@ -23,3 +23,9 @@ The below table contains description of each key and an example value.
 | version     | Version of the Helm chart. SemVer constraints supported                      | 0.49.\*                                                 |
 | namespace   | Namespace to deploy to                                                       | strimzi-kafka-operator-system                           |
 | releaseName | (optional) Release name to pass to helm template. If unset, name key is used | strimzi                                                 |
+
+## Extra resources
+
+Additional resources (external to the Helm chart) might be added under `extra/` directory for each addon. This directory will be recursively searched for resources.
+
+Due to a limitation in ArgoCD, the **`extra` directory must always be present, even if no extra resources are to be deployed. It may contain a single `.keep` file to meet this requirement.**
