@@ -51,7 +51,7 @@ As ArgoCD is not exposed to outside traffic, the UI can be accessed only via por
 kubectl port-forward -n argocd svc/argocd-server 8080:80
 ```
 
-This will let us access ArgoCD on `http:localhost:8080`. The admin credentials can be extracted from the admin secret in `argocd` namespace.
+This will let us access ArgoCD on `http://localhost:8080`. The admin credentials can be extracted from the admin secret in `argocd` namespace.
 
 `argocd` CLI can be used by running:
 
@@ -76,3 +76,49 @@ For PoC purposes, just two ApplicationSets are used to deploy these addons:
 They both run a single [Git generator](https://argo-cd.readthedocs.io/en/latest/operator-manual/applicationset/Generators-Git/) which generates and templates addon Applications per file or directory found.
 
 # Solution documentation
+
+Two solutions have been created:
+
+- one utilizing Crossplane KafkaTopicClaim XR and Kyverno for validation
+- one utiziling only Helm
+
+Both solutions are described below in detail with a step-by-step usage guides for tenants/developers.
+
+## Original solution (KafkaTopicClaim XR, Kyverno)
+
+The exercise required:
+
+- creation of KafkaTopicClaim Crossplane composite resource or similar that creates a KafkaTopic resource
+- validation of `retention.ms` topic parameter using Kyverno
+
+An XRD `KafkaTopicClaim` and a matching Composition have been created to solve this. These resources can be found under `bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim`.
+
+The XRD requires _topicName_ and _partitions_ to be specified and allows configuration of replication factor and retention time through _replicas_ and _retention_ parameters.
+The replication factor is by default set to 3 in the composition.
+
+The composition uses `patch-and-transform` function as it generally works well for the purpose of this PoC.
+It also hard codes the Strimzi Kafka cluster label (`strimzi.io/cluster`) to the value of `poc-kafka` for the purposes of this PoC.
+
+Additionally, a custom healthcheck in ArgoCD has been configured for KafkaTopicClaim resources. The healthcheck lets ArgoCD understand when the resource is healthy and set the status appropriately.
+This in turns allows the developer to view the status of the resource from the UI or CLI or, in more complex scenarios, introduce deployment dependencies.
+[It can be found in the Helm values file for ArgoCD](./bootstrap/argocd/values.yaml), under `resource.customizations.health.poc.io_KafkaTopicClaim` key.
+
+### Limitations
+
+There exists a limitation in the TopicOperator component of Strimzi, where only a single namespace can be watched for new KafkaTopic resources.
+Paired with Crossplane's ability to only deploy composed resources to the same namespace as the original XR, this can potentially introduce issues in multi-tenant scenarios,
+where, at least for visibility purposes, tenants might want/need view access into their KafkaTopicClaim resources in the cluster.
+Ultimately, this can but doesn't necessary have to be a problem, depending on whether any secrets are stored in the resources, etc.
+
+For the purposes of this PoC, TopicOperator has been configured to watch `kafka-topics` namespace for new KafkaTopics and likewise KafkaTopicClaims are deployed to this namespace.
+
+#### Possible workarounds
+
+Two workarounds can be considered for the namespace limitation:
+
+- using Crossplane provider `provider-kubernetes`, which allows creation of arbitrary resources across namespaces
+- limiting direct access to the `kafka-topics` namespace for developers and instead abstracting it only through individual ArgoCD Applications
+
+### Usage guide
+
+## Alternative solution (Helm)

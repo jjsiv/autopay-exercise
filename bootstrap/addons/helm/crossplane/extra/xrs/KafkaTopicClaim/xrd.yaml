@@ -42,3 +42,4 @@ spec:
                     Cannot be less than 1 hour (3600000) and higher than 7 days (604800000).
               required:
                 - topicName
+                - partitions

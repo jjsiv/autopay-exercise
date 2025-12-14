@@ -22,6 +22,8 @@ spec:
               metadata:
                 labels:
                   strimzi.io/cluster: poc-kafka
+              spec:
+                replicas: 3
             patches:
               - type: FromCompositeFieldPath
                 fromFieldPath: spec.topicName
