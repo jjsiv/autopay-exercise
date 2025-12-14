@@ -4,6 +4,7 @@ metadata:
   name: infrastructure
   namespace: argocd
 spec:
+  description: This is a privileged project for managing infrastructure applications.
   destinations:
     - namespace: "*"
       server: "*"

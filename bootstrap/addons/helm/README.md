@@ -3,7 +3,18 @@
 This directory contains cluter addons deployed from Helm charts.
 The ArgoCD `helm-addons` ApplicationSet will generate an Application for each directory contained here with name equal to the directory name.
 
-Each directory must contain a `config.yaml` and optionally a single `values.yaml` files for customizing the release.
+In the most simple form, each addon directory should look like this:
+
+```
+strimzi/
+├── config.yaml
+├── extra
+│   └── .gitkeep
+└── values.yaml
+```
+
+Each directory must contain a `config.yaml`, an optional single `values.yaml` files for customizing the release, and an `extra/` directory (which is recursively searched) for deploying additional resources if needed.
+Due to a limitation in ArgoCD, the **`extra` directory must always be present, even if no extra resources are to be deployed. It may contain a single `.keep` file to meet this requirement.**
 
 The structure for the `config.yaml` file is as follows:
 
@@ -23,9 +34,3 @@ The below table contains description of each key and an example value.
 | version     | Version of the Helm chart. SemVer constraints supported                      | 0.49.\*                                                 |
 | namespace   | Namespace to deploy to                                                       | strimzi-kafka-operator-system                           |
 | releaseName | (optional) Release name to pass to helm template. If unset, name key is used | strimzi                                                 |
-
-## Extra resources
-
-Additional resources (external to the Helm chart) might be added under `extra/` directory for each addon. This directory will be recursively searched for resources.
-
-Due to a limitation in ArgoCD, the **`extra` directory must always be present, even if no extra resources are to be deployed. It may contain a single `.keep` file to meet this requirement.**
