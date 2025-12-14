@@ -43,6 +43,25 @@ kubectl create -f bootstrap/argocd/extra -R
 
 This will deploy the AppProjects, Applications and ApplicationSets which will have ArgoCD manage the installation and management of itself as well asl other resources found in this repository.
 
+### Running UI/CLI
+
+As ArgoCD is not exposed to outside traffic, the UI can be accessed only via port forwarding:
+
+```bash
+kubectl port-forward -n argocd svc/argocd-server 8080:80
+```
+
+This will let us access ArgoCD on `http:localhost:8080`. The admin credentials can be extracted from the admin secret in `argocd` namespace.
+
+`argocd` CLI can be used by running:
+
+```bash
+argocd login --core
+kubectl config set-context --current --namespace=argocd
+```
+
+This assumes the current kubectl config is already set to the ArgoCD cluster.
+
 ## Cluster addons
 
 All cluster addons are contained within subdirectories under `bootstrap/addons` and are managed by ArgoCD.
