@@ -136,19 +136,39 @@ validate:
 
 ### Limitations
 
+#### Namespacing
+
 There exists a limitation in the TopicOperator component of Strimzi, where only a single namespace can be watched for new KafkaTopic resources. Also described in this [GitHub issue](github.com/strimzi/strimzi-kafka-operator/issues/1206).
-Paired with Crossplane's ability to only deploy composed resources to the same namespace as the original XR, this can potentially introduce issues in multi-tenant scenarios,
+Paired with Crossplane's ability to only deploy composed resources to the same namespace as the original XR (also described [here](https://github.com/crossplane/crossplane/issues/6759)), this can potentially introduce issues in multi-tenant scenarios,
 where, at least for visibility purposes, tenants might want/need view access into their KafkaTopicClaim resources in the cluster.
 Ultimately, this can but doesn't necessary have to be a problem, depending on whether any secrets are stored in the resources, etc.
 
 For the purposes of this PoC, TopicOperator has been configured to watch `kafka-topics` namespace for new KafkaTopics and likewise KafkaTopicClaims are deployed to this namespace.
 
-#### Possible workarounds
-
 Two workarounds can be considered for the namespace limitation:
 
 - using Crossplane provider `provider-kubernetes`, which allows creation of arbitrary resources across namespaces
 - limiting direct access to the `kafka-topics` namespace for developers and instead abstracting it only through individual ArgoCD Applications
+
+#### Resource validation
+
+Resource validation at CI/local level might be difficult due to the nature of Crossplane. Resources can be rendered locally via `crossplane render`, but this requires at least a working Docker environment and
+access to download Crossplane functions.
+
+Additionally, `crossplane render` does not perform validation on the Composite resources and will render even from invalid resources.
+For example, we can render `tests/ktc-invalid.yaml`, which is missing required `topicName` field and specifies an unknown `unknownField` field:
+
+```bash
+crossplane render tests/ktc-invalid.yaml bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/composition.yaml bootstrap/addons/helm/crossplane/extra/functions/patch-and-transform.yaml --xrd=bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/xrd.yaml
+```
+
+While we can validate our resource using `crossplane beta validate` command, this requires local access to XRD schemas.
+
+Additionally, any admission control can only be validated using `kyverno` CLI, which requires the developer to have access to both the CLI and policy schemas.
+
+In a pull request based self-service model where developers are expected to commit entire Kubernetes resources (especially considering concerns described in the Namespacing section),
+this introduces a large responsibility on developers/approvers/CI system to prevent invalid resources from being committed. Admittedly, most of these issues are resolved if the
+self-service process is abstracted through a platform such as Backstage.
 
 ### Usage guide
 
