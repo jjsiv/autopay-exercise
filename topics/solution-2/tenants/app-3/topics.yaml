@@ -1,1 +1,3 @@
-topics: {}
+topics:
+  new-topic:
+    partitions: 3
