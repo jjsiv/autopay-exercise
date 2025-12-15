@@ -1,0 +1,9 @@
+# Map of Kafka topics to create. Each entry is a separate topic.
+topics: {}
+  # my-topic:
+  # # Retention time for logs in miliseconds.
+  #   retention: 30
+  # # The number of partitions for this topic. Cannot be less than 1.
+  #   partitions: 3
+  # # Replication factor for the topic.
+  #   replicas: 2

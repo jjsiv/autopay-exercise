@@ -4,6 +4,7 @@ This repository contains 2 primary directories:
 
 - `bootstrap/`, which contains contains resources and configurations related to the cluster bootstrap/setup
 - `topics/`, which contains the developer self-service solution for managing Kafka topics
+- `tests/`, which contains various example resources for testing purposes
 
 # Cluster setup
 
@@ -159,7 +160,11 @@ Additionally, `crossplane render` does not perform validation on the Composite r
 For example, we can render `tests/ktc-invalid.yaml`, which is missing required `topicName` field and specifies an unknown `unknownField` field:
 
 ```bash
-crossplane render tests/ktc-invalid.yaml bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/composition.yaml bootstrap/addons/helm/crossplane/extra/functions/patch-and-transform.yaml --xrd=bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/xrd.yaml
+crossplane render \
+    tests/ktc-invalid.yaml \
+    bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/composition.yaml \
+    bootstrap/addons/helm/crossplane/extra/functions/patch-and-transform.yaml \
+    --xrd=bootstrap/addons/helm/crossplane/extra/xrs/KafkaTopicClaim/xrd.yaml
 ```
 
 While we can validate our resource using `crossplane beta validate` command, this requires local access to XRD schemas.

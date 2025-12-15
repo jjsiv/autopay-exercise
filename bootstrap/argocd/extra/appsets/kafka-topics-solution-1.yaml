@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kafka-topics-solution-1
+  namespace: argocd
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+    - git:
+        repoURL: git@github.com:jjsiv/autopay-exercise.git
+        revision: HEAD
+        directories:
+          - path: topics/solution-1/tenants/*
+  template:
+    metadata:
+      name: "kafka-topics-{{ .path.basename }}"
+      labels:
+        tenant: "{{ .path.basename }}"
+    spec:
+      project: kafka-topics
+      destination:
+        name: "in-cluster"
+        namespace: "kafka-topics"
+      source:
+        repoURL: git@github.com:jjsiv/autopay-exercise.git
+        targetRevision: main
+        path: "{{ .path.path }}"
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - ServerSideApply=true

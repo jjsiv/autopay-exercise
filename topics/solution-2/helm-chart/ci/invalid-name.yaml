@@ -1,0 +1,4 @@
+topics:
+  my+topic:
+    partitions: 3
+    replicas: 1

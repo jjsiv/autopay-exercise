@@ -1,0 +1,5 @@
+topics:
+  my-topic:
+    partitions: 3
+    replicas: 1
+    retention: 1000000000000

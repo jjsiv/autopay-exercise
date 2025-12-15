@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "topics": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-zA-Z0-9_-]+$": {
+                    "type": "object",
+                    "properties": {
+                        "partitions": {
+                            "description": "Number of partitions for the topic.",
+                            "type": "integer"
+                        },
+                        "replicas": {
+                            "description": "Replication factor. Must be between 1 and 32767",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 32767
+                        },
+                        "retention": {
+                            "description": "Retention period in milliseconds. Must be between 1 hour and 7 days",
+                            "type": "integer",
+                            "minimum": 3600000,
+                            "maximum": 604800000
+                        }
+                    },
+                    "required": [
+                        "partitions"
+                    ]
+                }
+            },
+            "additionalProperties": false
+        }
+    }
+}
