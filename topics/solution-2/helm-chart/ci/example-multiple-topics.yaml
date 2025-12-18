@@ -1,0 +1,10 @@
+topics:
+  a_ZZz:
+    partitions: 3
+    replicas: 1
+  myTopic:
+    partitions: 3
+    replicas: 1
+  another-one:
+    partitions: 3
+    replicas: 1

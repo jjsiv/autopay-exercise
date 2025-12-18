@@ -1,0 +1,44 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: kafkatopicclaim
+spec:
+  compositeTypeRef:
+    apiVersion: poc.io/v1alpha1
+    kind: KafkaTopicClaim
+  mode: Pipeline
+  pipeline:
+    - step: create-kafka-topic
+      functionRef:
+        name: crossplane-contrib-function-patch-and-transform
+      input:
+        apiVersion: pt.fn.crossplane.io/v1beta1
+        kind: Resources
+        resources:
+          - name: topic
+            base:
+              apiVersion: kafka.strimzi.io/v1
+              kind: KafkaTopic
+              metadata:
+                labels:
+                  strimzi.io/cluster: poc-kafka
+              spec:
+                replicas: 3
+            patches:
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.topicName
+                toFieldPath: spec.topicName
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.partitions
+                toFieldPath: spec.partitions
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.replicas
+                toFieldPath: spec.replicas
+              - type: FromCompositeFieldPath
+                fromFieldPath: spec.retention
+                toFieldPath: spec.config[retention.ms]
+            readinessChecks:
+              - type: MatchCondition
+                matchCondition:
+                  type: Ready
+                  status: "True"

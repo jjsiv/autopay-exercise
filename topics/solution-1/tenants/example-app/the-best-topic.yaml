@@ -1,0 +1,12 @@
+apiVersion: poc.io/v1alpha1
+kind: KafkaTopicClaim
+metadata:
+  name: example-app-the-best-topic
+  namespace: kafka-topics
+  labels:
+    strimzi.io/cluster: poc-kafka
+spec:
+  topicName: the-best-topic
+  partitions: 1
+  retention: 3600000
+  replicas: 1

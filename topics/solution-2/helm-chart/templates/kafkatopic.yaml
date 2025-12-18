@@ -1,0 +1,17 @@
+{{- $top := . }}
+{{- range $topicName, $topicSpec := .Values.topics }}
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaTopic
+metadata:
+  name: {{ $top.Release.Name }}-{{ $topicName | lower | replace "_" "-" }}
+  namespace: kafka-topics
+  labels:
+    strimzi.io/cluster: poc-kafka
+spec:
+  topicName: {{ $topicName }}
+  config:
+    retention.ms: {{ default 3600000 $topicSpec.retention }}
+  partitions: {{ $topicSpec.partitions }}
+  replicas: {{ default 1 $topicSpec.replicas }}
+---
+{{- end }}

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: example-app-publisher
+  name: example-app-publisher
+  namespace: example-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-app-publisher
+  template:
+    metadata:
+      labels:
+        app: example-app-publisher
+    spec:
+      containers:
+        - image: ghcr.io/jjsiv/autopay-exercise/example-app:master
+          imagePullPolicy: Always
+          args:
+            - pub
+            - --topic=the-best-topic
+            - --brokers=poc-kafka-kafka-brokers.kafka.svc.cluster.local:9092
+          name: example-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: example-app-subscriber
+  name: example-app-subscriber
+  namespace: example-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-app-subscriber
+  template:
+    metadata:
+      labels:
+        app: example-app-subscriber
+    spec:
+      containers:
+        - image: ghcr.io/jjsiv/autopay-exercise/example-app:master
+          imagePullPolicy: Always
+          args:
+            - sub
+            - --topic=the-best-topic
+            - --brokers=poc-kafka-kafka-brokers.kafka.svc.cluster.local:9092
+          name: example-app

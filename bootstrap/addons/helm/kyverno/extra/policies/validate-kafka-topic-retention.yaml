@@ -1,0 +1,22 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: validate
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  rules:
+    - name: validate-kafka-topic-retention
+      match:
+        any:
+          - resources:
+              kinds:
+                - KafkaTopicClaim
+      skipBackgroundRequests: true
+      validate:
+        allowExistingViolations: true
+        failureAction: Enforce
+        message: "Retention for the topic must not be lower than 3600000 (1 hour) or higher than 604800000 (7 days)"
+        pattern:
+          spec:
+            retention: 3600000-604800000

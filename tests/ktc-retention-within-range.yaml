@@ -1,0 +1,11 @@
+apiVersion: poc.io/v1alpha1
+kind: KafkaTopicClaim
+metadata:
+  name: test-topic
+  namespace: kafka-topics
+  labels:
+    strimzi.io/cluster: poc-kafka
+spec:
+  topicName: Test_Topic
+  retention: 604800000
+  partitions: 3

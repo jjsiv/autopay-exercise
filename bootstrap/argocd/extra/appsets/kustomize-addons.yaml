@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: kustomize-addons
+  namespace: argocd
+spec:
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  generators:
+    - git:
+        repoURL: https://github.com/jjsiv/autopay-exercise.git
+        revision: HEAD
+        directories:
+          - path: bootstrap/addons/kustomize/*
+  template:
+    metadata:
+      name: "{{ .path.basename }}"
+      labels:
+        addon: "{{ .path.basename }}"
+    spec:
+      project: infrastructure
+      destination:
+        name: "in-cluster"
+      source:
+        repoURL: https://github.com/jjsiv/autopay-exercise.git
+        targetRevision: main
+        path: "{{ .path.path }}/base"
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - ServerSideApply=true
+          - CreateNamespace=true

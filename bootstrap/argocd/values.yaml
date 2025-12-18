@@ -1,12 +1,29 @@
 configs:
   cm:
-    accounts.crossplane: apiKey
-    accounts.crossplane.enabled: "true"
     kustomize.buildOptions: "--enable-helm"
+
+    resource.customizations.health.poc.io_KafkaTopicClaim: |
+      hs = {}
+      if obj.status ~= nil then
+        if obj.status.conditions ~= nil then
+          for i, condition in ipairs(obj.status.conditions) do
+            if condition.type == "Ready" and condition.status == "False" and condition.reason ~= "Creating" then
+              hs.status = "Degraded"
+              hs.message = condition.message
+              return hs
+            end
+            if condition.type == "Ready" and condition.status == "True" then
+              hs.status = "Healthy"
+              hs.message = condition.message
+              return hs
+            end
+          end
+        end
+      end
+
+      hs.status = "Progressing"
+      hs.message = "Waiting for topic to be provisioned"
+      return hs
 
   params:
     server.insecure: true
-
-  rbac:
-    policy.csv: |
-      g, crossplane, role:admin

@@ -1,0 +1,4 @@
+topics:
+  a_ZZz:
+    partitions: 3
+    replicas: 1
