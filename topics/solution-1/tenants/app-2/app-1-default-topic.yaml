@@ -1,0 +1,11 @@
+apiVersion: poc.io/v1alpha1
+kind: KafkaTopicClaim
+metadata:
+  name: app-2-default-topic
+  namespace: kafka-topics
+  labels:
+    strimzi.io/cluster: poc-kafka
+spec:
+  topicName: app-2-default-topic
+  partitions: 3
+  retention: 3600000
